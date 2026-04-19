@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SearchBook - Cari Buku Siswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 flex flex-col h-screen">
+    <header class="bg-indigo-700 text-white p-5 shadow-lg text-center font-bold text-2xl">
+        📚 SearchBook
+    </header>
+
+    <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <div class="bg-indigo-100 p-4 rounded-xl w-fit max-w-md">Halo! Buku apa yang ingin kamu cari hari ini? Beritahu minatmu!</div>
+    </div>
+
+    <div class="p-4 bg-white flex border-t">
+        <input id="user-input" type="text" placeholder="Ketik minatmu di sini..." class="flex-1 border p-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <button onclick="sendChat()" class="bg-indigo-700 text-white px-6 rounded-r-lg font-bold hover:bg-indigo-800 transition">Cari</button>
+    </div>
+
+    <script>
+        async function sendChat() {
+            const input = document.getElementById('user-input');
+            const container = document.getElementById('chat-container');
+            if (!input.value) return;
+
+            // Tampilkan pesan user
+            container.innerHTML += `<div class="bg-gray-200 p-4 rounded-xl w-fit max-w-md ml-auto text-right font-medium">${input.value}</div>`;
+            
+            const message = input.value;
+            input.value = '';
+
+            const res = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            const data = await res.json();
+
+            // Tampilkan balasan AI
+            container.innerHTML += `<div class="bg-indigo-100 p-4 rounded-xl w-fit max-w-md text-slate-800 shadow-sm">${data.reply}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>
